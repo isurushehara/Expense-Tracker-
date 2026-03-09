@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -8,13 +9,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(title: const Text("Expense Tracker Login")),
 
@@ -23,12 +22,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
         child: Column(
           children: [
-
             TextField(
               controller: emailController,
-              decoration: const InputDecoration(
-                labelText: "Email",
-              ),
+              decoration: const InputDecoration(labelText: "Email"),
             ),
 
             const SizedBox(height: 20),
@@ -36,20 +32,30 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: const InputDecoration(
-                labelText: "Password",
-              ),
+              decoration: const InputDecoration(labelText: "Password"),
             ),
 
             const SizedBox(height: 30),
 
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                String email = emailController.text;
+                String password = passwordController.text;
 
+                String? token = await AuthService.login(email, password);
+
+                if (token != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Login Successful")),
+                  );
+                } else {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text("Login Failed")));
+                }
               },
               child: const Text("Login"),
-            )
-
+            ),
           ],
         ),
       ),

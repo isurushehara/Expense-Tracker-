@@ -18,6 +18,11 @@ app.use("/api/transactions", transactionRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/categories", categoryRoutes);
 
+// Sample route to test server
+app.get("/", (req, res) => {
+  res.json({ message: "API is working!" });
+});
+
 const PORT = 5000;
 
 app.listen(PORT, () => {
