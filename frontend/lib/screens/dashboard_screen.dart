@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../services/auth_service.dart';
+import 'add_transaction_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -11,7 +12,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
   double income = 0;
   double expense = 0;
   double balance = 0;
@@ -23,18 +23,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> loadDashboard() async {
-
     String? token = await AuthService.getToken();
 
     final response = await http.get(
       Uri.parse("http://localhost:5000/api/dashboard"),
-      headers: {
-        "Authorization": token ?? ""
-      }
+      headers: {"Authorization": token ?? ""},
     );
 
-    if(response.statusCode == 200){
-
+    if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
       setState(() {
@@ -42,27 +38,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
         expense = double.parse(data["total_expense"].toString());
         balance = double.parse(data["balance"].toString());
       });
-
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
-      appBar: AppBar(
-        title: const Text("Dashboard"),
+      appBar: AppBar(title: const Text("Dashboard")),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddTransactionScreen(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
 
       body: Padding(
         padding: const EdgeInsets.all(20),
 
         child: Column(
-
           children: [
-
             Card(
               child: ListTile(
                 title: const Text("Total Income"),
@@ -83,9 +82,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 trailing: Text("Rs $balance"),
               ),
             ),
-
           ],
-
         ),
       ),
     );
