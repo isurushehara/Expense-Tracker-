@@ -42,9 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 String email = emailController.text;
                 String password = passwordController.text;
 
-                String? token = await AuthService.login(email, password);
+                bool success = await AuthService.login(email, password);
 
-                if (token != null) {
+                if (success) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Login Successful")),
                   );
