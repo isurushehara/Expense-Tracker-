@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
 import '../services/auth_service.dart';
 import 'add_transaction_screen.dart';
+import 'transaction_history_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -45,14 +47,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Dashboard")),
+
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          // Open Add Transaction screen
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const AddTransactionScreen(),
             ),
           );
+
+          // Refresh dashboard after returning
+          loadDashboard();
         },
         child: const Icon(Icons.add),
       ),
@@ -65,21 +72,58 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Card(
               child: ListTile(
                 title: const Text("Total Income"),
-                trailing: Text("Rs $income"),
+                trailing: Text(
+                  "Rs $income",
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
+
+            const SizedBox(height: 10),
 
             Card(
               child: ListTile(
                 title: const Text("Total Expense"),
-                trailing: Text("Rs $expense"),
+                trailing: Text(
+                  "Rs $expense",
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
+
+            const SizedBox(height: 10),
 
             Card(
               child: ListTile(
                 title: const Text("Balance"),
-                trailing: Text("Rs $balance"),
+                trailing: Text(
+                  "Rs $balance",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            Card(
+              child: ListTile(
+                title: const Text("Transaction History"),
+                trailing: const Icon(Icons.arrow_forward),
+
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TransactionHistoryScreen(),
+                    ),
+                  );
+                },
               ),
             ),
           ],
