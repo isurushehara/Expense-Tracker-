@@ -6,6 +6,10 @@ import '../services/auth_service.dart';
 import 'add_transaction_screen.dart';
 import 'transaction_history_screen.dart';
 
+import 'package:fl_chart/fl_chart.dart';
+import '../services/chart_service.dart';
+import '../models/chart_model.dart';
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -18,10 +22,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   double expense = 0;
   double balance = 0;
 
+  List<ChartData> chartData = [];
+
   @override
   void initState() {
     super.initState();
     loadDashboard();
+    loadChart();
   }
 
   Future<void> loadDashboard() async {
@@ -41,6 +48,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         balance = double.parse(data["balance"].toString());
       });
     }
+  }
+
+  Future<void> loadChart() async {
+    final data = await ChartService.getExpenseChart();
+
+    setState(() {
+      chartData = data;
+    });
   }
 
   @override
@@ -124,6 +139,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   );
                 },
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+              height: 250,
+              child: PieChart(
+                PieChartData(
+                  sections: chartData.map((data) {
+                    return PieChartSectionData(
+                      value: data.total,
+                      title: data.category,
+                      radius: 80,
+                    );
+                  }).toList(),
+                ),
               ),
             ),
           ],
