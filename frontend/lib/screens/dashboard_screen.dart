@@ -12,6 +12,7 @@ import '../models/chart_model.dart';
 
 import '../services/budget_service.dart';
 import '../models/budget_model.dart';
+import 'set_budget_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -177,6 +178,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const Text(
                 "Budgets",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 10),
+
+              ElevatedButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SetBudgetScreen(),
+                    ),
+                  );
+
+                  loadBudgets(); // refresh budgets after adding
+                },
+                child: const Text("Set Budget"),
               ),
 
               const SizedBox(height: 10),
