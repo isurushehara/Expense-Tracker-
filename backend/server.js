@@ -7,6 +7,7 @@ const transactionRoutes = require("./routes/transactionRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const chartRoutes = require("./routes/chartRoutes");
+const budgetRoutes = require("./routes/budgetRoutes");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use("/api/transactions", transactionRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/charts", chartRoutes);
+app.use("/api/budgets", budgetRoutes);
 
 // Sample route to test server
 app.get("/", (req, res) => {

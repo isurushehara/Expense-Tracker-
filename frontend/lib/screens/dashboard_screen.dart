@@ -10,6 +10,9 @@ import 'package:fl_chart/fl_chart.dart';
 import '../services/chart_service.dart';
 import '../models/chart_model.dart';
 
+import '../services/budget_service.dart';
+import '../models/budget_model.dart';
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -23,12 +26,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   double balance = 0;
 
   List<ChartData> chartData = [];
+  List<Budget> budgets = [];
 
   @override
   void initState() {
     super.initState();
     loadDashboard();
     loadChart();
+    loadBudgets();
+  }
+
+  Future<void> loadBudgets() async {
+    final data = await BudgetService.getBudgets();
+
+    setState(() {
+      budgets = data;
+    });
   }
 
   Future<void> loadDashboard() async {
@@ -65,7 +78,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          // Open Add Transaction screen
           await Navigator.push(
             context,
             MaterialPageRoute(
@@ -73,92 +85,142 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           );
 
-          // Refresh dashboard after returning
           loadDashboard();
+          loadChart();
+          loadBudgets();
         },
         child: const Icon(Icons.add),
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(20),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
 
-        child: Column(
-          children: [
-            Card(
-              child: ListTile(
-                title: const Text("Total Income"),
-                trailing: Text(
-                  "Rs $income",
-                  style: const TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Card(
-              child: ListTile(
-                title: const Text("Total Expense"),
-                trailing: Text(
-                  "Rs $expense",
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Card(
-              child: ListTile(
-                title: const Text("Balance"),
-                trailing: Text(
-                  "Rs $balance",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            Card(
-              child: ListTile(
-                title: const Text("Transaction History"),
-                trailing: const Icon(Icons.arrow_forward),
-
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const TransactionHistoryScreen(),
+          child: Column(
+            children: [
+              Card(
+                child: ListTile(
+                  title: const Text("Total Income"),
+                  trailing: Text(
+                    "Rs $income",
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
                     ),
-                  );
-                },
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            SizedBox(
-              height: 250,
-              child: PieChart(
-                PieChartData(
-                  sections: chartData.map((data) {
-                    return PieChartSectionData(
-                      value: data.total,
-                      title: data.category,
-                      radius: 80,
-                    );
-                  }).toList(),
+                  ),
                 ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 10),
+
+              Card(
+                child: ListTile(
+                  title: const Text("Total Expense"),
+                  trailing: Text(
+                    "Rs $expense",
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              Card(
+                child: ListTile(
+                  title: const Text("Balance"),
+                  trailing: Text(
+                    "Rs $balance",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              Card(
+                child: ListTile(
+                  title: const Text("Transaction History"),
+                  trailing: const Icon(Icons.arrow_forward),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TransactionHistoryScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              SizedBox(
+                height: 250,
+                child: PieChart(
+                  PieChartData(
+                    sections: chartData.map((data) {
+                      return PieChartSectionData(
+                        value: data.total,
+                        title: data.category,
+                        radius: 80,
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
+              const Text(
+                "Budgets",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+
+              const SizedBox(height: 10),
+
+              budgets.isEmpty
+                  ? const Text("No budgets set yet")
+                  : Column(
+                      children: budgets.map((b) {
+                        double progress = b.spent / b.limit;
+
+                        return Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  b.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 5),
+
+                                Text("Rs ${b.spent} / Rs ${b.limit}"),
+
+                                const SizedBox(height: 8),
+
+                                LinearProgressIndicator(
+                                  value: progress > 1 ? 1 : progress,
+                                  color: progress > 1
+                                      ? Colors.red
+                                      : Colors.blue,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+            ],
+          ),
         ),
       ),
     );
