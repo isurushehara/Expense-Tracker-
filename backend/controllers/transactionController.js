@@ -51,3 +51,33 @@ exports.deleteTransaction = async (req, res) => {
     console.error(err);
   }
 };
+
+exports.updateTransaction = async (req, res) => {
+
+  try {
+
+    const id = req.params.id;
+
+    const { category_id, amount, type, description, date } = req.body;
+
+    const result = await pool.query(
+
+      `UPDATE transactions
+       SET category_id=$1, amount=$2, type=$3, description=$4, date=$5
+       WHERE id=$6
+       RETURNING *`,
+
+      [category_id, amount, type, description, date, id]
+
+    );
+
+    res.json({
+      message: "Transaction updated",
+      transaction: result.rows[0]
+    });
+
+  } catch (err) {
+    console.error(err);
+  }
+
+};

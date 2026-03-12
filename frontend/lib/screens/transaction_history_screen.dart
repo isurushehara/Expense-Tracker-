@@ -4,6 +4,8 @@ import '../models/transaction_model.dart';
 import '../services/transaction_service.dart';
 import 'package:http/http.dart' as http;
 import '../services/auth_service.dart';
+import '../screens/edit_transaction_screen.dart';
+
 
 class TransactionHistoryScreen extends StatefulWidget {
   const TransactionHistoryScreen({super.key});
@@ -71,15 +73,19 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  "Rs ${t.amount}",
-                  style: TextStyle(
-                    color: t.type == "income" ? Colors.green : Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                IconButton(
+                  icon: const Icon(Icons.edit),
 
-                const SizedBox(width: 10),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditTransactionScreen(transaction: t),
+                      ),
+                    );
+                  },
+                ),
 
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
