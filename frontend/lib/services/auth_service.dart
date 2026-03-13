@@ -35,4 +35,24 @@ class AuthService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove("token");
   }
+
+  static Future<Map<String, dynamic>?> getProfile() async {
+    final token = await getToken();
+
+    if (token == null || token.isEmpty) {
+      return null;
+    }
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/auth/profile"),
+      headers: {"Authorization": token},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data["user"] as Map<String, dynamic>;
+    }
+
+    return null;
+  }
 }
