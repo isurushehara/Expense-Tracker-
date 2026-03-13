@@ -13,11 +13,7 @@ class AuthService {
     final response = await http.post(
       Uri.parse("$baseUrl/auth/register"),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        "name": name,
-        "email": email,
-        "password": password,
-      }),
+      body: jsonEncode({"name": name, "email": email, "password": password}),
     );
 
     final data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -81,5 +77,25 @@ class AuthService {
     }
 
     return null;
+  }
+
+  static Future<bool> deleteAccount() async {
+    final token = await getToken();
+
+    if (token == null || token.isEmpty) {
+      return false;
+    }
+
+    final response = await http.delete(
+      Uri.parse("$baseUrl/auth/delete"),
+      headers: {"Authorization": token},
+    );
+
+    if (response.statusCode == 200) {
+      await logout();
+      return true;
+    }
+
+    return false;
   }
 }

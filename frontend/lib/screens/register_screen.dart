@@ -48,7 +48,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     final success = result["success"] == true;
-    final message = result["message"]?.toString() ??
+    final message =
+        result["message"]?.toString() ??
         (success ? "Registration successful" : "Registration failed");
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -111,15 +112,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const SizedBox(height: 8),
                   const Text(
                     "Join to track your finances",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white70,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ],
               ),
             ),
-            
+
             // Register Form Card
             Transform.translate(
               offset: const Offset(0, -30),
@@ -149,13 +147,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    
+
                     // Name Field
                     TextField(
                       controller: nameController,
                       decoration: InputDecoration(
                         labelText: "Full Name",
-                        prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF6366F1)),
+                        prefixIcon: const Icon(
+                          Icons.person_outline,
+                          color: Color(0xFF6366F1),
+                        ),
                         filled: true,
                         fillColor: const Color(0xFFF8FAFC),
                         border: OutlineInputBorder(
@@ -172,7 +173,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         labelText: "Email Address",
-                        prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF6366F1)),
+                        prefixIcon: const Icon(
+                          Icons.email_outlined,
+                          color: Color(0xFF6366F1),
+                        ),
                         filled: true,
                         fillColor: const Color(0xFFF8FAFC),
                         border: OutlineInputBorder(
@@ -182,14 +186,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Password Field
                     TextField(
                       controller: passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
                         labelText: "Password",
-                        prefixIcon: const Icon(Icons.lock_outline, color: Color(0xFF6366F1)),
+                        prefixIcon: const Icon(
+                          Icons.lock_outline,
+                          color: Color(0xFF6366F1),
+                        ),
                         filled: true,
                         fillColor: const Color(0xFFF8FAFC),
                         border: OutlineInputBorder(
@@ -199,7 +206,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    
+
                     // Register Button
                     SizedBox(
                       width: double.infinity,
@@ -226,7 +233,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
 
                     const SizedBox(height: 16),
-                    
+
                     // Already have an account
                     Center(
                       child: TextButton(

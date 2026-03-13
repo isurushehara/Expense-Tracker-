@@ -76,21 +76,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Dashboard"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfileScreen()),
-              );
-            },
-          ),
-        ],
-      ),
-
+      backgroundColor: const Color(0xFFF3F5F7),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(
@@ -106,152 +92,357 @@ class _DashboardScreenState extends State<DashboardScreen> {
         },
         child: const Icon(Icons.add),
       ),
-
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-
-          child: Column(
-            children: [
-              Card(
-                child: ListTile(
-                  title: const Text("Total Income"),
-                  trailing: Text(
-                    "Rs $income",
-                    style: const TextStyle(
-                      color: Colors.green,
+        child: Column(
+          children: [
+            // Header Section
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.only(
+                top: 60,
+                bottom: 30,
+                left: 20,
+                right: 20,
+              ),
+              decoration: const BoxDecoration(
+                color: Color(0xFF6366F1), // Purple color
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Dashboard",
+                    style: TextStyle(
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Card(
-                child: ListTile(
-                  title: const Text("Total Expense"),
-                  trailing: Text(
-                    "Rs $expense",
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
+                  IconButton(
+                    icon: const Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 30,
                     ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Card(
-                child: ListTile(
-                  title: const Text("Balance"),
-                  trailing: Text(
-                    "Rs $balance",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              Card(
-                child: ListTile(
-                  title: const Text("Transaction History"),
-                  trailing: const Icon(Icons.arrow_forward),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TransactionHistoryScreen(),
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              SizedBox(
-                height: 250,
-                child: PieChart(
-                  PieChartData(
-                    sections: chartData.map((data) {
-                      return PieChartSectionData(
-                        value: data.total,
-                        title: data.category,
-                        radius: 80,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfileScreen(),
+                        ),
                       );
-                    }).toList(),
+                    },
                   ),
+                ],
+              ),
+            ),
+
+            Transform.translate(
+              offset: const Offset(0, -20),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        title: const Text(
+                          "Total Income",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: Text(
+                          "Rs $income",
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        title: const Text(
+                          "Total Expense",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: Text(
+                          "Rs $expense",
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        title: const Text(
+                          "Balance",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: Text(
+                          "Rs $balance",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 25),
+
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.history,
+                          color: Color(0xFF6366F1),
+                        ),
+                        title: const Text(
+                          "Transaction History",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: const Icon(Icons.arrow_forward_ios),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const TransactionHistoryScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    Container(
+                      height: 280,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: PieChart(
+                        PieChartData(
+                          sections: chartData.map((data) {
+                            return PieChartSectionData(
+                              value: data.total,
+                              title:
+                                  '${data.category}\n${(data.total / expense * 100).toStringAsFixed(0)}%',
+                              radius: 80,
+                              titleStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 40),
+
+                    const Text(
+                      "Budgets",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
+                      ),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6366F1),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SetBudgetScreen(),
+                            ),
+                          );
+
+                          loadBudgets(); // refresh budgets after adding
+                        },
+                        child: const Text(
+                          "Set New Budget",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.1,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    budgets.isEmpty
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Text(
+                              "No budgets set yet. Tap above to create one!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
+                        : Column(
+                            children: budgets.map((b) {
+                              double progress = b.spent / b.limit;
+                              if (progress.isNaN || progress.isInfinite) {
+                                progress = 0;
+                              }
+
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 15),
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      b.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "Rs ${b.spent.toStringAsFixed(2)} / Rs ${b.limit.toStringAsFixed(2)}",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black54,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    LinearProgressIndicator(
+                                      value: progress > 1 ? 1 : progress,
+                                      backgroundColor: Colors.grey[200],
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        progress > 0.8
+                                            ? Colors.redAccent
+                                            : (progress > 0.5
+                                                  ? Colors.orangeAccent
+                                                  : const Color(0xFF6366F1)),
+                                      ),
+                                      minHeight: 8,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: 40),
-
-              const Text(
-                "Budgets",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 10),
-
-              ElevatedButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SetBudgetScreen(),
-                    ),
-                  );
-
-                  loadBudgets(); // refresh budgets after adding
-                },
-                child: const Text("Set Budget"),
-              ),
-
-              const SizedBox(height: 10),
-
-              budgets.isEmpty
-                  ? const Text("No budgets set yet")
-                  : Column(
-                      children: budgets.map((b) {
-                        double progress = b.spent / b.limit;
-
-                        return Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  b.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 5),
-
-                                Text("Rs ${b.spent} / Rs ${b.limit}"),
-
-                                const SizedBox(height: 8),
-
-                                LinearProgressIndicator(
-                                  value: progress > 1 ? 1 : progress,
-                                  color: progress > 1
-                                      ? Colors.red
-                                      : Colors.blue,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

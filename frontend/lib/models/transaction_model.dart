@@ -26,4 +26,6 @@ class TransactionModel {
 
   }
 
+  Object? get categoryId => null;
+
 }
