@@ -1,18 +1,70 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import 'dashboard_screen.dart';
-import 'register_screen.dart'; // import the new screen
+import 'login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleRegister() async {
+    final name = nameController.text.trim();
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in all fields")),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Password must be at least 6 characters")),
+      );
+      return;
+    }
+
+    final result = await AuthService.register(name, email, password);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    final success = result["success"] == true;
+    final message = result["message"]?.toString() ??
+        (success ? "Registration successful" : "Registration failed");
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: success ? Colors.green : Colors.redAccent,
+      ),
+    );
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               width: double.infinity,
               padding: const EdgeInsets.only(top: 80, bottom: 50),
               decoration: const BoxDecoration(
-                color: Color(0xFF6366F1), // Purple color
+                color: Color(0xFF6366F1), // Purple theme matching request
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(40),
                   bottomRight: Radius.circular(40),
@@ -41,14 +93,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
-                      Icons.account_balance_wallet,
+                      Icons.person_add_alt_1,
                       size: 60,
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    "Expense Tracker",
+                    "Create Account",
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -58,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    "Master your finances easily",
+                    "Join to track your finances",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
@@ -68,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             
-            // Login Form Card
+            // Register Form Card
             Transform.translate(
               offset: const Offset(0, -30),
               child: Container(
@@ -89,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Login",
+                      "Register",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -98,6 +150,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 24),
                     
+                    // Name Field
+                    TextField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: "Full Name",
+                        prefixIcon: const Icon(Icons.person_outline, color: Color(0xFF6366F1)),
+                        filled: true,
+                        fillColor: const Color(0xFFF8FAFC),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
                     // Email Field
                     TextField(
                       controller: emailController,
@@ -132,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 32),
                     
-                    // Login Button
+                    // Register Button
                     SizedBox(
                       width: double.infinity,
                       height: 56,
@@ -145,30 +213,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        onPressed: () async {
-                          String email = emailController.text;
-                          String password = passwordController.text;
-
-                          bool success = await AuthService.login(email, password);
-
-                          if (success && context.mounted) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const DashboardScreen(),
-                              ),
-                            );
-                          } else if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Login Failed. Please check your credentials."),
-                                backgroundColor: Colors.redAccent,
-                              ),
-                            );
-                          }
-                        },
+                        onPressed: _handleRegister,
                         child: const Text(
-                          "Sign In",
+                          "Sign Up",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -177,21 +224,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 16),
                     
-                    // Create Account Link
+                    // Already have an account
                     Center(
                       child: TextButton(
                         onPressed: () {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const RegisterScreen(),
+                              builder: (context) => const LoginScreen(),
                             ),
                           );
                         },
                         child: const Text(
-                          "Don't have an account? Sign Up",
+                          "Already have an account? Login",
                           style: TextStyle(
                             color: Color(0xFF6366F1),
                             fontWeight: FontWeight.w600,
