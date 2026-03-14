@@ -2,7 +2,7 @@ const pool = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = "mysecretkey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /* Register User */
 exports.register = async (req, res) => {
@@ -66,5 +66,47 @@ exports.login = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+  }
+};
+
+/* Get Profile */
+exports.profile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await pool.query(
+      "SELECT id, name, email FROM users WHERE id = $1",
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/* Delete Account */
+exports.deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await pool.query(
+      "DELETE FROM users WHERE id = $1 RETURNING id",
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "Account deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to delete account" });
   }
 };

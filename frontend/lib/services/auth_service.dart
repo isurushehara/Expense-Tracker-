@@ -1,0 +1,101 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+class AuthService {
+  static const String baseUrl = "http://localhost:5000/api";
+
+  static Future<Map<String, dynamic>> register(
+    String name,
+    String email,
+    String password,
+  ) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/auth/register"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"name": name, "email": email, "password": password}),
+    );
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return {"success": true, "message": data["message"]};
+    }
+
+    return {
+      "success": false,
+      "message": data["message"] ?? "Registration failed",
+    };
+  }
+
+  static Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("token");
+  }
+
+  static Future<bool> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/auth/login"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"email": email, "password": password}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      String token = data["token"];
+
+      // Save token
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("token", token);
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("token");
+  }
+
+  static Future<Map<String, dynamic>?> getProfile() async {
+    final token = await getToken();
+
+    if (token == null || token.isEmpty) {
+      return null;
+    }
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/auth/profile"),
+      headers: {"Authorization": token},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data["user"] as Map<String, dynamic>;
+    }
+
+    return null;
+  }
+
+  static Future<bool> deleteAccount() async {
+    final token = await getToken();
+
+    if (token == null || token.isEmpty) {
+      return false;
+    }
+
+    final response = await http.delete(
+      Uri.parse("$baseUrl/auth/delete"),
+      headers: {"Authorization": token},
+    );
+
+    if (response.statusCode == 200) {
+      await logout();
+      return true;
+    }
+
+    return false;
+  }
+}
